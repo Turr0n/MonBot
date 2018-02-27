@@ -1,0 +1,9 @@
+python-dateutil
+tqdm
+datetime
+argparse
+bs4
+unicodedata
+requests
+json
+os

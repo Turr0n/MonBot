@@ -10,14 +10,18 @@ monbot.py -s yyyymm -e yyyymm
 ```
 
 Argumentos:
-* -s fecha inicial
-* -e fecha final
+* -s: fecha inicial
+* -e: fecha final
 
 Si solo se especifica la fecha inicial se descargaran solamente las intervenciones pertenecientes a ese yyyymm
 
 Cada intervención es almacenada en un archivo JSON individual con la siguiente información en forma de objeto (diccionario en Python):
 ```
 {fecha, lugar, titulo, href, texto}
+```
+## Instalación
+```
+pip install -r requirements.txt
 ```
 
 ## Ejemplo
