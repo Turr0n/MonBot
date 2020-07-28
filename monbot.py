@@ -1,37 +1,51 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 from dateutil.relativedelta import relativedelta
-from tqdm import tqdm
+from typing import Generator
+
 import scrapper
-import datetime
+from datetime import datetime
 import argparse
 
-def args():
+
+def get_arguments():
     parser = argparse.ArgumentParser()
+    
     parser.add_argument(
-        '-s', dest='start', action='store', required=True, type=str)
+        '-s', dest = 'start', action = 'store', required = True, type = str
+    )
+    
     parser.add_argument(
-        '-e', dest='end', action='store', required=False, type=str, default='')
+        '-e', dest = 'end', action = 'store', required = False, type = str, default = ''
+    )
+    
+    parser.add_argument(
+        '-fn', dest = 'fn', action = 'store', required = False, type = str, default = 'info.json'
+    )
     
     args = parser.parse_args()
-    args.end = args.start if args.end == '' else args.end
+    args.end = args.start if (args.end == '') else args.end
+    
     return args
 
-def dates(start, end):
+
+def dates(start: str, end: str) -> Generator[str, None, None]:
     '''Crear el intervalo de fechas según la fecha inicial y final especificada'''
 
-    start = datetime.datetime.strptime(start, '%Y%m')
-    end = datetime.datetime.strptime(end, '%Y%m')
+    current = datetime.strptime(start, '%Y%m')
+    final = datetime.strptime(end, '%Y%m')
 
-    while start <= end:
-        yield start.date()
-        start += relativedelta(months=+1)
+    while current <= final:
+        tmp = current.date()
+        
+        yield f"{ tmp.year }{ tmp.month }" if (tmp.month >= 10) else f"{ tmp.year }0{ tmp.month }"
+        current += relativedelta(months = 1)
 
-args = args()
+
+args = get_arguments()
+bot = scrapper.pepe()
+
 for date in dates(args.start, args.end):
-    print('Descargando textos de: {}-{}'.format(date.year, date.month))
-    bot = scrapper.pepe(date)
-    bot.process()
-    [bot.get_docs(entry) for entry in tqdm(bot.entries)]
+    print(f'Descargando textos de: {date}')
 
+    bot.process(date)
+
+bot.dump(args.fn)
